@@ -1,1 +1,41 @@
-{"name":"com.example.hello","version":"1.0.0","description":"This is the project created from the template: cordova_template","scripts":{"test":"echo \"Error: no test specified\" && exit 1","build":"webpack --config webpack.config.js && cordova build android"},"keywords":["ecosystem:cordova"],"license":"ISC","dependencies":{"babel-polyfill":"^6.26.0","cordova-android":"^8.1.0","phaser-ce":"^2.9.2"},"devDependencies":{"babel-core":"^6.26.0","babel-loader":"^7.1.2","copy-webpack-plugin":"^4.2.0","expose-loader":"^0.7.3","webpack":"^3.8.1","cordova-plugin-whitelist":"1"},"displayName":"HelloWorld","cordova":{"plugins":{"cordova-plugin-whitelist":{}}}}
+{
+   "name": "com.example.hello",
+   "version": "1.0.0",
+   "description": "This is the project created from the template: cordova_template",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "build": "webpack --config webpack.config.js"
+   },
+   "keywords": [
+      "ecosystem:cordova"
+   ],
+   "license": "ISC",
+   "dependencies": {
+      "babel-polyfill": "^6.26.0",
+      "cordova-android": "^8.1.0",
+      "cordova-browser": "^6.0.0",
+      "phaser": "^3.21.0",
+      "mrpas": "^1.2.1",
+      "dungeon-factory": "^1.0.6"
+   },
+   "devDependencies": {
+      "babel-core": "^6.26.0",
+      "babel-loader": "^7.1.2",
+      "copy-webpack-plugin": "^4.2.0",
+      "expose-loader": "^0.7.3",
+      "webpack": "^4.41.5",
+      "webpack-cli": "^3.3.10",
+      "cordova-plugin-whitelist": "1",
+      "ts-loader": "^6.2.1",
+      "typescript": "^3.7.4"
+   },
+   "displayName": "HelloWorld",
+   "cordova": {
+      "plugins": {
+         "cordova-plugin-whitelist": {}
+      },
+      "platforms": [
+         "browser"
+      ]
+   }
+}

@@ -2,17 +2,17 @@ var path = require('path')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const BUILD_DIR = path.resolve(__dirname, 'www')
-const PHASER_DIR = path.join(__dirname, '/node_modules/phaser-ce/')
-const phaser = path.join(PHASER_DIR, 'build/custom/phaser-split.js')
-const pixi = path.join(PHASER_DIR, 'build/custom/pixi.js')
-const p2 = path.join(PHASER_DIR, 'build/custom/p2.js')
+const PHASER_DIR = path.join(__dirname, '/node_modules/phaser/')
+const phaser = path.join(PHASER_DIR, 'dist/phaser.js')
+
 
 module.exports = {
   context: __dirname,
   entry: {
-    app: ['babel-polyfill', path.resolve(__dirname, './src/index.js')],
-    vendor: ['pixi', 'p2', 'phaser']
+    app: ['babel-polyfill', path.resolve(__dirname, './src/index.ts')],
+    vendor: ['phaser']
   },
+  mode:"development",
   output: {
     pathinfo: true,
     path: BUILD_DIR,
@@ -26,16 +26,14 @@ module.exports = {
         loader: 'babel-loader',
         include: path.join(__dirname, 'src')
       },
-      { test: /pixi\.js/, use: ['expose-loader?PIXI'] },
-      { test: /phaser-split\.js$/, use: ['expose-loader?Phaser'] },
-      { test: /p2\.js/, use: ['expose-loader?p2'] }
+      { test: /\.ts$/, loader: "ts-loader", exclude: "/node_modules/" },
+      { test: /phaser\.js$/, loader: "expose-loader?Phaser" }
     ]
   },
   resolve: {
+    extensions: [".ts", ".js"],
     alias: {
-      phaser: phaser,
-      pixi: pixi,
-      p2: p2
+      phaser: phaser
     }
   },
   plugins: [
