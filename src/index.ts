@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import InfoScene from "./scenes/InfoScene";
+import MainMenu from "./scenes/MainMenu";
 
 export function initialize() {
     document.addEventListener('deviceready', onDeviceReady, false);
@@ -18,7 +19,7 @@ function onDeviceReady() {
       height: window.innerHeight,
       render: { pixelArt: true },
       physics: { default: "arcade", arcade: { debug: false, gravity: { y: 0 } } },
-      scene: [ InfoScene]
+      scene: [MainMenu,InfoScene]
     });
     
     setUpHotReload();

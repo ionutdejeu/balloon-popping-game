@@ -14,9 +14,11 @@
       "babel-polyfill": "^6.26.0",
       "cordova-android": "^8.1.0",
       "cordova-browser": "^6.0.0",
-      "phaser": "^3.21.0",
+      "cordova-plugin-screen-orientation": "^3.0.2",
+      "dungeon-factory": "^1.0.6",
+      "es6-promise-plugin": "^4.2.2",
       "mrpas": "^1.2.1",
-      "dungeon-factory": "^1.0.6"
+      "phaser": "^3.21.0"
    },
    "devDependencies": {
       "babel-core": "^6.26.0",
@@ -32,7 +34,8 @@
    "displayName": "HelloWorld",
    "cordova": {
       "plugins": {
-         "cordova-plugin-whitelist": {}
+         "cordova-plugin-whitelist": {},
+         "cordova-plugin-screen-orientation": {}
       },
       "platforms": [
          "browser"
