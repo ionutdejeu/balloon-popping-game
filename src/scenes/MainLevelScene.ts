@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases,Sounds} from '../Data';
-import BubbleManager from "../Prefabs/BubbleManager";
+import {BubbleManager} from "../Prefabs/BubbleManager";
 
 export default class MainMenu extends Phaser.Scene {
   
@@ -14,6 +14,7 @@ export default class MainMenu extends Phaser.Scene {
   preload():void{
     this.load.setPath('assets/images');
     this.load.image('bubble',Atlases.BubbleSprite);
+    this.load.image('bubbleExplosionParticle', 'blue.png');
     this.SetupBackgroundGraphics();
 
     this.load.setPath('assets/audio');
@@ -21,9 +22,9 @@ export default class MainMenu extends Phaser.Scene {
     this.load.audio('BackgroundMusic',Sounds.BackgroundMusic);
   }
   create(): void {
+    //this.physics.world.setBoundsCollision(false,false,true,false);
     this.bubbleManager.SoundSetup();
     this.bubbleManager.SetupUI();
-    this.bubbleManager.spawnRandomBubbles(10);
     var music = this.sound.add('BackgroundMusic');
     music.play();
   }
