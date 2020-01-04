@@ -5,12 +5,10 @@ export default class TextButton{
     
     scene:Phaser.Scene
     textGameObject:Phaser.GameObjects.Text;
-    clickEventEmitter:EventEmitter;
-
+    public events:EventEmitter = new EventEmitter();
+    
     constructor(scene:Phaser.Scene,posX:number,posY:number,label:string){
         this.scene =scene;
-        //this.clickEventEmitter = new EventEmitter();
-        
         this.textGameObject = this.scene.make.text({
             x: posX,
             y: posY,

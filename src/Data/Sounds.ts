@@ -1,7 +1,7 @@
 export default class Sounds {
-    //Background music
-    public static MenuMusic: string = 'doobly_doo';
-    public static GameMusic: string = 'overworld';
+     
+    public static BaloonPop: string = 'pop.ogg';
+    public static BackgroundMusic:string = 'background_music_menu.mp3';
 
     //Sound effects
     public static Click: string = 'click';
@@ -16,9 +16,5 @@ export default class Sounds {
     /**
      * A list of all audio we need after the preloader.
      */
-    public static list: string[] = [
-        Sounds.MenuMusic,
-        Sounds.GameMusic,
-        Sounds.Click
-    ];
+    public static list: string[] = [];
 }

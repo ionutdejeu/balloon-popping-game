@@ -3,7 +3,7 @@ export default class Atlases {
   public static Clouds1: string = 'cloud1.PNG';
   public static Clouds2: string = 'cloud2.PNG';
   public static Clouds3: string = 'cloud3.PNG';
-
+  public static BubbleSprite: string = 'bubble256.png';
   /**
    *  A list of all atlases we need for the preloader.
    */

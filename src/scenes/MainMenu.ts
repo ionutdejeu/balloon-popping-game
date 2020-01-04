@@ -12,9 +12,12 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload():void { 
-    this.load.image('cloud1','assets/images/'+Atlases.Clouds1);
-    this.load.image('cloud2','assets/images/'+Atlases.Clouds2);
-    this.load.image('cloud3','assets/images/'+Atlases.Clouds3);
+    this.load.setPath('assets/images');
+    this.load.image('cloud1',Atlases.Clouds1);
+    this.load.image('cloud2',Atlases.Clouds2);
+    this.load.image('cloud3',Atlases.Clouds3);
+
+    this.load.setPath('assets/audio');
     this.load.audio('backgroundMusic','assets/audio/background_music_menu.mp3');
   }
   create(): void {
