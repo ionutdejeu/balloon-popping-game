@@ -31,13 +31,9 @@ export class SpawnBubblesManager {
             callback: this.update, 
             callbackScope: this, 
             loop: true });
-        // this.explosionDelayTimedEvent = this.parentScene.time.addEvent({ delay: 500, 
-        //     callback: this.killBubble, 
-        //     callbackScope: this });
+        
         this.parentScene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,this.projectileDestoryed,this);
-
         this.particles = this.parentScene.add.particles('bubbleExplosionParticle');
-
          
          
     }
@@ -52,7 +48,7 @@ export class SpawnBubblesManager {
                 Phaser.Math.Between(0, this.parentScene.cameras.main.width),
                 this.parentScene.cameras.main.height,this.particles);
             this.projectiles.add(prefabInstance.bubbleSprite);
-            prefabInstance.setRandomSpeed();
+            prefabInstance.Init();
         }
     }
 
@@ -60,9 +56,10 @@ export class SpawnBubblesManager {
         console.log('emi particles',prefab.bubbleSprite.x,prefab.bubbleSprite.y);
         this.projectiles.killAndHide(prefab.bubbleSprite); 
     }
+     
 
     public killBubble(prefab:BubblePrefab){
-
+        
     }
     
 }

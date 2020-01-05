@@ -17,8 +17,7 @@ export class BubbleManager{
     constructor(scene:Phaser.Scene){
         this.scene = scene;
         this.scoreManager = new ScoreManager(this.scene);
-        this.spawnManager = new SpawnBubblesManager(this.scene)
-        
+        this.spawnManager = new SpawnBubblesManager(this.scene);
     }
 
     public SetupUI(){

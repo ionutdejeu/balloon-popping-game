@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Atlasses from '../Data/Atlasses';
 import {BUBBLE_EVENTS_CONSTANTS} from './BubbleManager'
+import { EVENTS_CONSTANTS } from "./SpawnBubblesManager";
 
 
 export const bubbleColorsOptions = {
@@ -29,6 +30,7 @@ export class BubblePrefab {
     public sizeXY:number;
     public tapCallback?:(BubblePrefab)=>void;
     public particleEmitter:Phaser.GameObjects.Particles.ParticleEmitter;
+    public interalTimer:Phaser.Time.TimerEvent;
     constructor(public scene:Phaser.Scene,
         posX:number,
         posY:number,
@@ -37,7 +39,7 @@ export class BubblePrefab {
         this.bubbleSprite = scene.physics.add.sprite(posX, posY, 'bubble', 0);
         this.bubbleSprite.setOrigin(0.5,0.5);
         this.bubbleSprite.setInteractive();
-        this.sizeXY = Phaser.Math.Between(50,150);
+        this.sizeXY = Phaser.Math.Between(50,100);
         this.bubbleSprite.setDisplaySize(this.sizeXY,this.sizeXY)
          
         this.particleEmitter = particleManager.createEmitter({
@@ -62,10 +64,26 @@ export class BubblePrefab {
         this.bubbleSprite.on('pointerout', (event)=> {
             this.bubbleSprite.clearTint();
         });
+        
     }
 
-    public setRandomSpeed(){
+    public Init(){
         this.arcadePhysicsBody =  <Phaser.Physics.Arcade.Body>this.bubbleSprite.body;
-        this.arcadePhysicsBody.setVelocity(0,Phaser.Math.Between(-100,-50));
+        this.arcadePhysicsBody.setVelocity(0,Phaser.Math.Between(-200,-100));
+        this.interalTimer = this.scene.time.addEvent({ delay: 1000, 
+            callback: this.checkSpritesOutOfBoundes, 
+            callbackScope: this, 
+            loop: true });
     }
+
+    public checkSpritesOutOfBoundes(){
+        let bounds = new Phaser.Geom.Rectangle(); 
+        this.arcadePhysicsBody.getBounds(bounds);
+        if(!Phaser.Geom.Rectangle.Overlaps(this.scene.physics.world.bounds,bounds)){
+            // kill the sprite 
+            this.scene.events.emit(EVENTS_CONSTANTS.DESTROY_EVENT,this);
+        }
+    
+    }
+    
 }
