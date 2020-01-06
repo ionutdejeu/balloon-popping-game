@@ -15,13 +15,13 @@ export default class ButtonPannel{
         this.positionX = posX;
         this.positionY = posY;
     }
-    addTextButton(text:string){
+    addTextButton(text:string,callback:()=>void){
         // calculate next button position based on weidth and height 
         this.childElements.push(
             new TextButton(this.scene, 
                 this.positionX ,
                 this.positionY+ this.buttonHeight*this.childElements.length,
-                text)
+                text,callback)
         );
     }
 } 

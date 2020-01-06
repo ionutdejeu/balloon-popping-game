@@ -20,7 +20,7 @@ function onDeviceReady() {
       height: window.innerHeight,
       render: { pixelArt: true },
       physics: { default: "arcade", arcade: { debug: false, gravity: { y: 0 } } },
-      scene: [MainLevelScene,MainMenu,InfoScene]
+      scene: [MainMenu,MainLevelScene,InfoScene]
     });
     
     setUpHotReload();

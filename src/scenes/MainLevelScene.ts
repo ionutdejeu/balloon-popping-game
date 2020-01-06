@@ -15,7 +15,7 @@ export default class MainMenu extends Phaser.Scene {
     this.load.setPath('assets/images');
     this.load.image('bubble',Atlases.BubbleSprite);
     this.load.image('bubbleExplosionParticle', 'blue.png');
-    this.SetupBackgroundGraphics();
+    this.cameras.main.setBackgroundColor(0x96DDFF); 
 
     this.load.setPath('assets/audio');
     this.load.audio('BaloonPop',Sounds.BaloonPop);
@@ -29,7 +29,5 @@ export default class MainMenu extends Phaser.Scene {
     music.play();
   }
 
-  private SetupBackgroundGraphics(){
-    this.cameras.main.setBackgroundColor(0x96DDFF); 
-  }
+   
 }

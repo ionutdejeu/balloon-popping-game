@@ -5,9 +5,10 @@ export default class TextButton{
     
     scene:Phaser.Scene
     textGameObject:Phaser.GameObjects.Text;
-    public events:EventEmitter = new EventEmitter();
+     
     
-    constructor(scene:Phaser.Scene,posX:number,posY:number,label:string){
+    constructor(scene:Phaser.Scene,posX:number,posY:number,label:string,
+        callback?:()=>void){
         this.scene =scene;
         this.textGameObject = this.scene.make.text({
             x: posX,
@@ -36,7 +37,7 @@ export default class TextButton{
         this.textGameObject.setDepth(100);
         this.textGameObject.on('pointerover', function (event) {
             this.setTint(0xff0000);
-            
+            if(callback!=null)callback();
         });    
         this.textGameObject.on('pointerout', function (event) {
             this.clearTint();
