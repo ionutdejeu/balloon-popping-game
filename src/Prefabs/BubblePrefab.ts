@@ -56,7 +56,7 @@ export class BubblePrefab {
             on:false, // initally set to inactive;
         });
         
-        this.bubbleSprite.on('pointerover', (event)=> {
+        this.bubbleSprite.on('pointerdown', (event)=> {
             this.bubbleSprite.setTint(0xff0000);
             this.particleEmitter.explode(4,this.bubbleSprite.x,this.bubbleSprite.y);
             this.scene.events.emit(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,this);

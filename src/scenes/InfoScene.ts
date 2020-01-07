@@ -1,8 +1,11 @@
 import Phaser from "phaser";
 
-export default class InfoScene extends Phaser.Scene {
+export const Info_Constants={
+  ScenKey:'InfoScene'
+}
+export class InfoScene extends Phaser.Scene {
   constructor() {
-    super({ key: "InfoScene" });
+    super({ key:Info_Constants.ScenKey  });
   }
 
   create(): void {

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
+import { MainLevel_Constants } from "../scenes/MainLevelScene";
 
 export const MAIN_MENU_EVENTS = {
     MAIN_MENU_STARTGAME:'MAIN MENU START GAME OPTION',
@@ -9,21 +10,27 @@ export const MAIN_MENU_EVENTS = {
 
 export class MainMenuManager{
     buttonPannel:ButtonPannel;
+    music:Phaser.Sound.BaseSound;
     constructor(
         public scene:Phaser.Scene,
         )
     {
         this.scene.events.on(MAIN_MENU_EVENTS.MAIN_MENU_QUIT,this.quitApplication,this);
-        this.buttonPannel= new ButtonPannel(this.scene,200,100);
-        this.buttonPannel.addTextButton("Play Game",this.playGameButtonCallback);
-        this.buttonPannel.addTextButton("Options",this.optionsButtonCallback);
+        //this.scene.events.on(MAIN_MENU_EVENTS.MAIN_MENU_STARTGAME,this.playGameButtonCallback,this);
+        this.buttonPannel= new ButtonPannel(this.scene,this.scene.cameras.main.centerX,100);
+        this.buttonPannel.addTextButton("Play Game",()=>{this.playGameButtonCallback()});
+        this.buttonPannel.addTextButton("Options",()=>{});
         this.buttonPannel.addTextButton("Unlocks",()=>{});
         this.buttonPannel.addTextButton("Quit",this.quitButtonCallback);
-
+        this.music = this.scene.sound.add('backgroundMusic');
+        this.music.play();
     }
 
     playGameButtonCallback(){
         console.log("pressed Play game button",this);
+        this.music.stop();
+        this.scene.scene.stop();
+        this.scene.scene.start(MainLevel_Constants.ScenKey);
     }
     optionsButtonCallback(){
         console.log("optionsButtonCallback  button",this);

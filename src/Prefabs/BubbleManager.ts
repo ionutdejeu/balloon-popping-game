@@ -2,6 +2,7 @@ import Phaser, { GameObjects } from "phaser";
 import {BubblePrefab} from "./BubblePrefab";
 import { ScoreManager } from "./ScoreManagerPrefab";
 import { SpawnBubblesManager } from "./SpawnBubblesManager";
+import { InGameMenuManager } from "../Managers/InGameMenuManager";
 
 
 export const BUBBLE_EVENTS_CONSTANTS = {
@@ -12,6 +13,7 @@ export class BubbleManager{
     public popSoundEffect:Phaser.Sound.BaseSound;
     public scoreManager:ScoreManager;
     public spawnManager:SpawnBubblesManager;
+    public inGameUI:InGameMenuManager;
      
     
     constructor(scene:Phaser.Scene){
@@ -24,6 +26,8 @@ export class BubbleManager{
         this.scoreManager.setupUI();
         this.spawnManager.setup();
         this.SetupEvents();
+        this.inGameUI = new InGameMenuManager(this.scene);
+
     }
 
     public SoundSetup(){

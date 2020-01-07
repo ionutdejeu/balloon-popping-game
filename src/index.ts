@@ -1,19 +1,21 @@
 import Phaser from "phaser";
-import InfoScene from "./scenes/InfoScene";
-import MainMenu from "./scenes/MainMenu";
-import MainLevelScene from "./scenes/MainLevelScene";
+import {InfoScene, Info_Constants } from "./scenes/InfoScene";
+import {MainMenu, MainMenu_Constants } from "./scenes/MainMenu";
+import {MainLevelScene, MainLevel_Constants} from "./scenes/MainLevelScene";
 
 export function initialize() {
     document.addEventListener('deviceready', onDeviceReady, false);
 }
-
+export let game:Phaser.Game;
+export let previousActiveSceneKey:string;
 function onDeviceReady() {
     // Handle the Cordova pause and resume events
+    previousActiveSceneKey = '';
     document.addEventListener('pause', onPause, false);
     document.addEventListener('resume', onResume, false);
 
     // Initialize the game 
-    const game = new Phaser.Game({
+    game = new Phaser.Game({
       type: Phaser.WEBGL,
       // TODO: OnResize
       width: window.innerWidth,
@@ -31,10 +33,15 @@ function onDeviceReady() {
  
 function onPause() {
     // TODO: This application has been suspended. Save application state here.
+    if( game.scene.isActive(MainLevel_Constants.ScenKey)) previousActiveSceneKey=MainLevel_Constants.ScenKey;
+    if( game.scene.isActive(MainMenu_Constants.ScenKey)) previousActiveSceneKey=MainLevel_Constants.ScenKey;
+    if( game.scene.isActive(Info_Constants.ScenKey)) previousActiveSceneKey=MainLevel_Constants.ScenKey;
+    game.scene.pause(previousActiveSceneKey);
 }
 
 function onResume() {
-    // TODO: This application has been reactivated. Restore application state here.
+    game.scene.resume(previousActiveSceneKey);
+    
 }
 
 function setUpHotReload() {

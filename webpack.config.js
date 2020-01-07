@@ -18,6 +18,10 @@ module.exports = {
     path: BUILD_DIR,
     filename: '[name].js'
   },
+  devServer: {
+    contentBase: './www',
+    hot: true,
+  },
   devtool: 'source-map',
   module: {
     rules: [

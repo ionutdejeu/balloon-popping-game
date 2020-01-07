@@ -3,11 +3,15 @@ import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases,Sounds} from '../Data';
 import {BubbleManager} from "../Prefabs/BubbleManager";
 
-export default class MainMenu extends Phaser.Scene {
+export const MainLevel_Constants={
+  ScenKey:'MainLevel'
+}
+export class MainLevelScene extends Phaser.Scene {
   
   bubbleManager:BubbleManager;
+  
   constructor() {
-    super({ key: "ManinLevel" });
+    super({ key: MainLevel_Constants.ScenKey });
     this.bubbleManager = new BubbleManager(this);
 
   }

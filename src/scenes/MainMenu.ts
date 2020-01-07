@@ -3,11 +3,14 @@ import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases} from '../Data';
 import { MainMenuManager } from "../Managers/MainMenuManager";
 
-export default class MainMenu extends Phaser.Scene {
+export const MainMenu_Constants={
+  ScenKey:'MainMenu'
+}
+export class MainMenu extends Phaser.Scene {
   
   maninMenuManager:MainMenuManager;
   constructor() {
-    super({ key: "MainMenu" });
+    super({ key: MainMenu_Constants.ScenKey });
   
     
   }
@@ -28,8 +31,7 @@ export default class MainMenu extends Phaser.Scene {
     this.add.sprite(150,400,'cloud2');
     this.add.sprite(300,600,'cloud2');
 
-    var music = this.sound.add('backgroundMusic');
-    music.play();
+    
     this.maninMenuManager = new MainMenuManager(this);
   }
 }
