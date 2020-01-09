@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import {InfoScene, Info_Constants } from "./scenes/InfoScene";
 import {MainMenu, MainMenu_Constants } from "./scenes/MainMenu";
 import {MainLevelScene, MainLevel_Constants} from "./scenes/MainLevelScene";
+import { ProgressBarScene,Constants as ProgressParConstants } from "./Scenes/ProgressBarScene";
 
 export function initialize() {
     document.addEventListener('deviceready', onDeviceReady, false);
@@ -22,7 +23,7 @@ function onDeviceReady() {
       height: window.innerHeight,
       render: { pixelArt: true },
       physics: { default: "arcade", arcade: { debug: false, gravity: { y: 0 } } },
-      scene: [MainMenu,MainLevelScene,InfoScene]
+      scene: [ProgressBarScene,MainMenu,MainLevelScene,InfoScene]
     });
     
     setUpHotReload();

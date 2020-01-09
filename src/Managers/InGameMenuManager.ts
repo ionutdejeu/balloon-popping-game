@@ -13,6 +13,7 @@ export class InGameMenuManager{
     levelRemainingTime:Phaser.GameObjects.Graphics; 
     
     constructor(public scene:Phaser.Scene){
+        
         // this.levelRemainingTime= this.scene.add.graphics({
         //     x: 0,
         //     y: 0,

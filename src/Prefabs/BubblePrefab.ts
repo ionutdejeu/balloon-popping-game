@@ -40,8 +40,7 @@ export class BubblePrefab {
         this.bubbleSprite.setOrigin(0.5,0.5);
         this.bubbleSprite.setInteractive();
         this.sizeXY = Phaser.Math.Between(50,100);
-        this.bubbleSprite.setDisplaySize(this.sizeXY,this.sizeXY)
-         
+        this.bubbleSprite.setDisplaySize(this.sizeXY,this.sizeXY);
         this.particleEmitter = particleManager.createEmitter({
             alpha: { start: 1, end: 0 },
             scale: { start: 0.5, end: 2.5 },
