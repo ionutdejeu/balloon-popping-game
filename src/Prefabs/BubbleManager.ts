@@ -21,7 +21,7 @@ export class BubbleManager{
         this.scene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubbleContainer)=>{
             console.log(prefab);
             this.popSoundEffect.play();
-            this.scoreManager.scoreChangedEventHandler(prefab);
+            
         })
         this.popSoundEffect = this.scene.sound.add('BaloonPop');
     }

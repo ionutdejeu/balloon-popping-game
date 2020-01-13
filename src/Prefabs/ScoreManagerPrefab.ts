@@ -12,8 +12,7 @@ export class ScoreManager {
     constructor(scene:Phaser.Scene){
 
         this.scene=scene;
-        this.label = new TextLabel(this.scene,
-            this.scene.cameras.main.centerX,100,'Score: '+this.score);
+        
     }
 
     

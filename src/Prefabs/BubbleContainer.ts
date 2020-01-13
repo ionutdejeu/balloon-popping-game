@@ -23,7 +23,7 @@ export class StandardBubbleTabHandler implements BubbleTapHandler
 }
 export class BubbleContainer extends Phaser.GameObjects.Container{
 
-    public scoreValue:number = 20;
+    public scoreValue:number = 1;
     public bubbleSprite:Phaser.GameObjects.Sprite; 
     public innerContentSprite:Phaser.GameObjects.Sprite;
     public arcadePhysicsBody: Phaser.Physics.Arcade.Body;
