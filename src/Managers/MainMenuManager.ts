@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
-import { MainLevel_Constants } from "../scenes/MainLevelScene";
+import { MainLevel_Constants } from "../Scenes/MainLevelScene";
 
 export const MAIN_MENU_EVENTS = {
     MAIN_MENU_STARTGAME:'MAIN MENU START GAME OPTION',

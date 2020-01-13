@@ -115,12 +115,12 @@ class CircularHealthBar{
   {
       this.bar.clear();
       let d = Math.floor(this.p * this.value);
-      // BG
-      this.bar.lineStyle(2, 0xffffff);
-      this.bar.beginPath();
-      this.bar.arc(this.x, this.y, 52, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(360), true, 0.02);
-      this.bar.strokePath();
-      this.bar.closePath();
+      // // BG
+      // this.bar.lineStyle(2, 0xffffff);
+      // this.bar.beginPath();
+      // this.bar.arc(this.x, this.y, 52, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(360), true, 0.02);
+      // this.bar.strokePath();
+      // this.bar.closePath();
 
       // Health
       this.bar.beginPath();

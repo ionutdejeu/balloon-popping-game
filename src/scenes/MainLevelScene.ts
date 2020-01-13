@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases,Sounds} from '../Data';
 import {BubbleManager} from "../Prefabs/BubbleManager";
+import { InGameMenuConstant } from "./InGameMenuScene";
 
 export const MainLevel_Constants={
   ScenKey:'MainLevel'
@@ -12,7 +13,7 @@ export class MainLevelScene extends Phaser.Scene {
   
   constructor() {
     super({ key: MainLevel_Constants.ScenKey });
-    this.bubbleManager = new BubbleManager(this);
+    
 
   }
   preload():void{
@@ -27,10 +28,10 @@ export class MainLevelScene extends Phaser.Scene {
   }
   create(): void {
     //this.physics.world.setBoundsCollision(false,false,true,false);
-    this.bubbleManager.SoundSetup();
-    this.bubbleManager.SetupUI();
-    var music = this.sound.add('BackgroundMusic');
-    music.play();
+    this.bubbleManager = new BubbleManager(this);
+    // var music = this.sound.add('BackgroundMusic');
+    // music.play();
+    this.scene.launch(InGameMenuConstant.SceneKey);
   }
 
    

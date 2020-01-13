@@ -1,6 +1,6 @@
 import Phaser, { MathPhaser } from "phaser";
 import TextLabel from "../Controls/TextLabelControl";
-import { BubblePrefab } from "./BubblePrefab";
+import { BubbleContainer } from "./BubbleContainer";
 
 
 export class ScoreManager {
@@ -12,15 +12,12 @@ export class ScoreManager {
     constructor(scene:Phaser.Scene){
 
         this.scene=scene;
-        
-    }
-
-    public setupUI(){
         this.label = new TextLabel(this.scene,
             this.scene.cameras.main.centerX,100,'Score: '+this.score);
     }
 
-    public scoreChangedEventHandler(bubblePrefabOrigin:BubblePrefab){
+    
+    public scoreChangedEventHandler(bubblePrefabOrigin:BubbleContainer){
         console.log('Score Manager::UpdateScore');
         this.score +=bubblePrefabOrigin.scoreValue;
         this.label.textGameObject.text = "Score: "+this.score;
