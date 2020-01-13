@@ -1,8 +1,7 @@
 import Phaser, { GameObjects } from "phaser";
-import {BubblePrefab} from "./BubblePrefab";
 import { ScoreManager } from "./ScoreManagerPrefab";
 import { SpawnBubblesManager } from "./SpawnBubblesManager";
-import { InGameMenuManager } from "../Managers/InGameMenuManager";
+import { BubbleContainer } from "./BubbleContainer";
 
 
 export const BUBBLE_EVENTS_CONSTANTS = {
@@ -13,34 +12,23 @@ export class BubbleManager{
     public popSoundEffect:Phaser.Sound.BaseSound;
     public scoreManager:ScoreManager;
     public spawnManager:SpawnBubblesManager;
-    public inGameUI:InGameMenuManager;
      
     
     constructor(scene:Phaser.Scene){
         this.scene = scene;
         this.scoreManager = new ScoreManager(this.scene);
         this.spawnManager = new SpawnBubblesManager(this.scene);
-    }
-
-    public SetupUI(){
-        this.scoreManager.setupUI();
-        this.spawnManager.setup();
-        this.SetupEvents();
-        this.inGameUI = new InGameMenuManager(this.scene);
-
-    }
-
-    public SoundSetup(){
-        this.popSoundEffect = this.scene.sound.add('BaloonPop');
-    }
-
-    public SetupEvents(){
-        this.scene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubblePrefab)=>{
+        this.scene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubbleContainer)=>{
             console.log(prefab);
             this.popSoundEffect.play();
             this.scoreManager.scoreChangedEventHandler(prefab);
         })
+        this.popSoundEffect = this.scene.sound.add('BaloonPop');
     }
+    
+     
+ 
 
+     
     
 }

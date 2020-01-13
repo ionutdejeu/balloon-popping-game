@@ -1,6 +1,7 @@
 import Phaser, { GameObjects } from "phaser";
 import { BubblePrefab } from "./BubblePrefab";
 import { BUBBLE_EVENTS_CONSTANTS } from "./BubbleManager";
+import { BubbleContainer } from "./BubbleContainer";
 
 export const EVENTS_CONSTANTS ={
     UPDATE_EVENT:'WeponPrefabUpdate',
@@ -19,9 +20,6 @@ export class SpawnBubblesManager {
     constructor(public parentScene:Phaser.Scene){    
         this.fireLimit=20;
         this.fireRate=1000;
-    }
-
-    public setup(){
         this.projectiles = this.parentScene.physics.add.group();
         
         this.parentScene.events.on(EVENTS_CONSTANTS.UPDATE_EVENT,this.update,this);
@@ -34,9 +32,9 @@ export class SpawnBubblesManager {
         
         this.parentScene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,this.projectileDestoryed,this);
         this.particles = this.parentScene.add.particles('bubbleExplosionParticle');
-         
-         
     }
+
+   
     public update(eventData){
         this.fire();
         //TODO: Check if outside of bounds 
@@ -44,17 +42,20 @@ export class SpawnBubblesManager {
     public fire(){
         console.log(this.projectiles);
         if(this.fireLimit > this.projectiles.countActive()){
-            const prefabInstance = new BubblePrefab(this.parentScene,
+            const prefabInstance = new BubbleContainer(this.parentScene,
                 Phaser.Math.Between(0, this.parentScene.cameras.main.width),
-                this.parentScene.cameras.main.height,this.particles);
-            this.projectiles.add(prefabInstance.bubbleSprite);
-            prefabInstance.Init();
+                this.parentScene.cameras.main.height,null,this.particles);
+            this.projectiles.add(prefabInstance);
+            prefabInstance.afterPhysicsInit();
         }
     }
 
-    public projectileDestoryed(prefab:BubblePrefab){
-        console.log('emi particles',prefab.bubbleSprite.x,prefab.bubbleSprite.y);
-        this.projectiles.killAndHide(prefab.bubbleSprite); 
+    public projectileDestoryed(prefab:BubbleContainer){
+        console.log('emi particles',prefab.x,prefab.y);
+    
+        prefab.destroy();
+        this.projectiles.killAndHide(prefab);
+        
     }
      
 

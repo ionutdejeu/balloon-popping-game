@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases} from '../Data';
 import { MainMenuManager } from "../Managers/MainMenuManager";
 
@@ -31,7 +30,6 @@ export class MainMenu extends Phaser.Scene {
     this.add.sprite(150,400,'cloud2');
     this.add.sprite(300,600,'cloud2');
 
-    
     this.maninMenuManager = new MainMenuManager(this);
   }
 }
