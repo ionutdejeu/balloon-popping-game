@@ -42,9 +42,7 @@ export class SpawnBubblesManager {
     public fire(){
         console.log(this.projectiles);
         if(this.fireLimit > this.projectiles.countActive()){
-            const prefabInstance = new BubbleContainer(this.parentScene,
-                Phaser.Math.Between(0, this.parentScene.cameras.main.width),
-                this.parentScene.cameras.main.height,null,this.particles);
+            const prefabInstance = new BubbleContainer(this.parentScene,null,this.particles);
             this.projectiles.add(prefabInstance);
             prefabInstance.afterPhysicsInit();
         }

@@ -18,12 +18,13 @@ export class BubbleManager{
         this.scene = scene;
         this.scoreManager = new ScoreManager(this.scene);
         this.spawnManager = new SpawnBubblesManager(this.scene);
+        this.popSoundEffect = this.scene.sound.add('BaloonPop');
         this.scene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubbleContainer)=>{
             console.log(prefab);
             this.popSoundEffect.play();
             
         })
-        this.popSoundEffect = this.scene.sound.add('BaloonPop');
+        
     }
     
      

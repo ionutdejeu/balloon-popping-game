@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases,Sounds} from '../Data';
 import {BubbleManager, BUBBLE_EVENTS_CONSTANTS} from "../Prefabs/BubbleManager";
-import { InGameMenuConstant, InGameMenuScene } from "./InGameMenuScene";
+import { InGameMenuConstant, InGameMenuScene, InGameMenuEvents } from "./InGameMenuScene";
 import { BubbleContainer } from "../Prefabs/BubbleContainer";
 
 export const MainLevel_Constants={
@@ -15,8 +15,6 @@ export class MainLevelScene extends Phaser.Scene {
   
   constructor() {
     super({ key: MainLevel_Constants.ScenKey });
-    
-
   }
   preload():void{
     this.load.setPath('assets/images');
@@ -70,6 +68,13 @@ export class MainLevelScene extends Phaser.Scene {
     this.inGameMenuScene = this.scene.get(InGameMenuConstant.SceneKey) as InGameMenuScene;
     this.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubbleContainer)=>{
         this.inGameMenuScene.scoreChangedEventHandler(prefab);
+    });
+    this.inGameMenuScene.events.on(InGameMenuEvents.TAP_PAUSEMENU,(paused:boolean)=>{
+      this.bubbleManager.spawnManager.timedEvent.paused=paused;  
+      if(paused){ 
+          this.physics.pause();
+        }
+        else this.physics.resume();
     });
   }
   

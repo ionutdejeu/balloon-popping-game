@@ -2,58 +2,93 @@ import Phaser from "phaser";
 import Atlasses from '../Data/Atlasses';
 import {BUBBLE_EVENTS_CONSTANTS} from './BubbleManager'
 import { EVENTS_CONSTANTS } from "./SpawnBubblesManager";
+import { InGameMenuEvents } from "../Scenes/InGameMenuScene";
 
 
 export const bubbleColorsOptions = {
     red:0xff0000,
-    blue:0x0000FF
+    blue:0x0000FF,
+
 }
 
-export interface BubbleTapHandler{ 
-    handleClickEvent(event);
+export interface Behaviour<T>{ 
+    execute(param:T);
 }
-
-export class StandardBubbleTabHandler implements BubbleTapHandler
-{
-    handleClickEvent(bubblePrefab: BubbleContainer) {
-        
-        if(bubblePrefab.tapCallback != null) bubblePrefab.tapCallback(bubblePrefab);
-        
+export class StandardSpawnBehaviour implements Behaviour<BubbleContainer>{
+    execute(prefab:BubbleContainer){
+        prefab.setPosition(Phaser.Math.Between(prefab.sizeXY/2, prefab.scene.cameras.main.width-prefab.sizeXY/2),
+                prefab.scene.cameras.main.height);
     }
+}
+
+export class ColoredBubbleTabBehaviour implements Behaviour<BubbleContainer>
+{
+    public colorSuccessions = [
+        0x00F,
+        0x0F0,
+        0xF00
+    ]
+    public bubbleHealth = 3; 
+    execute(bubblePrefab: BubbleContainer) {
+        if(!bubblePrefab.gamePaused){
+            bubblePrefab.bubbleSprite.setTint(this.colorSuccessions[this.bubbleHealth-1]);
+            this.bubbleHealth--;
+            if(this.bubbleHealth<=0){ 
+                bubblePrefab.killBehaviour.execute(bubblePrefab);
+            }
+        }
+    }
+}
+export class StandardBubbleTapBehaviour implements Behaviour<BubbleContainer>
+{
+    execute(bubblePrefab: BubbleContainer) {
+        if(!bubblePrefab.gamePaused){
+            bubblePrefab.killBehaviour.execute(bubblePrefab);
+        }
+    }
+}
+export class StandardBubbleKillBehavior implements Behaviour<BubbleContainer>{
+    execute(param:BubbleContainer){
+            param.bubbleSprite.setTint(0xff0000);
+            param.particleEmitter.explode(10,param.x,param.y);
+            param.scene.events.emit(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,param);
+        }
 }
 export class BubbleContainer extends Phaser.GameObjects.Container{
 
     public scoreValue:number = 1;
     public bubbleSprite:Phaser.GameObjects.Sprite; 
-    public innerContentSprite:Phaser.GameObjects.Sprite;
     public arcadePhysicsBody: Phaser.Physics.Arcade.Body;
     public sizeXY:number;
-    public tapCallback?:(BubblePrefab)=>void;
     public particleEmitter:Phaser.GameObjects.Particles.ParticleEmitter;
     public interalTimer:Phaser.Time.TimerEvent;
-     
+    public gamePaused:boolean = false;
+    public tapBehaviour: Behaviour<BubbleContainer>;
+    public killBehaviour: Behaviour<BubbleContainer>;
+    public spawnBehaviour: Behaviour<BubbleContainer>;
 
     constructor(public scene:Phaser.Scene,
-        posX:number,
-        posY:number,
         children:Phaser.GameObjects.GameObject[],
         public particleManager:Phaser.GameObjects.Particles.ParticleEmitterManager
         ) 
         {
+            super(scene, 0, 0,children);
+            this.sizeXY = Phaser.Math.Between(50,100);
+
+            this.spawnBehaviour = new StandardSpawnBehaviour();
+            this.spawnBehaviour.execute(this);
             
-            super(scene, posX, posY,children);
-                
+            //Graphics 
             this.bubbleSprite = scene.physics.add.sprite(0, 0, 'bubble', 0);
             this.bubbleSprite.setOrigin(0.5,0.5);
-            this.sizeXY = Phaser.Math.Between(50,100);
-            this.bubbleSprite.setDisplaySize(this.sizeXY,this.sizeXY);
-            //this.bubbleSprite.setSize(this.sizeXY,this.sizeXY);
-            this.setInteractive(new Phaser.Geom.Circle(0, 0, this.sizeXY),Phaser.Geom.Circle.Contains);
             
-            const graphics = this.scene.add.graphics();
-            graphics.lineStyle(2, 0x00ffff, 1);
-            graphics.strokeCircle(0, 0, this.input.hitArea.radius);
-            this.add(graphics);
+            this.bubbleSprite.setDisplaySize(this.sizeXY,this.sizeXY);
+            this.bubbleSprite.setPosition(-this.sizeXY/2,-this.sizeXY/2);
+            //this.bubbleSprite.setSize(this.sizeXY,this.sizeXY);
+            this.setInteractive(
+                new Phaser.Geom.Circle(0,0, this.sizeXY/2),
+                Phaser.Geom.Circle.Contains);
+            
             this.setSize(this.sizeXY, this.sizeXY);
             this.scene.physics.world.enable(this);
 
@@ -71,18 +106,21 @@ export class BubbleContainer extends Phaser.GameObjects.Container{
                 maxParticles: 4,
                 on:false, // initally set to inactive;
             });
+            this.tapBehaviour = new ColoredBubbleTabBehaviour();
+            this.killBehaviour = new StandardBubbleKillBehavior();
 
             this.on('pointerover',(event)=>{
-                this.bubbleSprite.setTint(0x44ff44);
+                //this.bubbleSprite.setTint(0x44ff44);
             });
             this.bubbleSprite.on('pointerdown', (event)=> {
                 console.log(this);    
             });
             this.on('pointerdown', (event)=> {
-                this.bubbleSprite.setTint(0xff0000);
-                this.particleEmitter.explode(10,this.x,this.y);
-                this.scene.events.emit(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,this);
-            });    
+                this.tapBehaviour.execute(this);
+            });
+            this.on(InGameMenuEvents.TAP_PAUSEMENU,(paused:boolean)=>{
+                this.gamePaused = paused;
+            });
             this.on('pointerout', (event)=> {
                 console.log(this);
                 this.bubbleSprite.clearTint();
