@@ -120,6 +120,7 @@ export class BubbleContainer extends Phaser.GameObjects.Container{
             });
             this.on(InGameMenuEvents.TAP_PAUSEMENU,(paused:boolean)=>{
                 this.gamePaused = paused;
+                console.log('container:paused');
             });
             this.on('pointerout', (event)=> {
                 console.log(this);

@@ -2,6 +2,7 @@ import Phaser, { Display } from "phaser";
 import { ProgressBar } from "../Controls/ProgressBar";
 import { BubbleContainer } from "../Prefabs/BubbleContainer";
 import TextLabel from "../Controls/TextLabelControl";
+import TextButton from "../Controls/TextButton";
 
 
 export const InGameMenuEvents = {
@@ -72,7 +73,7 @@ export class InGameMenuScene extends Phaser.Scene {
             loop: true });
         this.inGameMenuContainer = this.add.container(0,0);
         this.inGameMenuContainer.setVisible(false);
-        //this.setContainerConfig(this.inGameMenuContainer);
+        this.setContainerConfig(this.inGameMenuContainer);
         this.toggleMenuSpriteBtn= this.add.sprite(this.cameras.main.width-30,55,'toggleMenu_btn');
         this.toggleMenuSpriteBtn
             .setDisplaySize(50,50)
@@ -94,8 +95,7 @@ export class InGameMenuScene extends Phaser.Scene {
         }
         else{
             // stop the game 
-
-
+            
         }
     }
 
@@ -115,24 +115,34 @@ export class InGameMenuScene extends Phaser.Scene {
         
         graphics.lineStyle(2, 0xffff00, 1);
         //  32px radius on the corners
-        graphics.strokeRoundedRect(100, 100, this.cameras.main.width-200, this.cameras.main.height-200, 32);
+        graphics.strokeRect(0, 0, this.cameras.main.width, this.cameras.main.height);
         //  BG
         graphics.fillStyle(0xFDB813);
-        graphics.fillRoundedRect(101, 101, this.cameras.main.width-202, this.cameras.main.height-202, 32);
+        graphics.fillRect(2, 2, this.cameras.main.width-4, this.cameras.main.height-4);
         graphics.closePath();
         
         
         container.add(graphics);
 
-        const muteButtonLabel = new TextLabel(this,0,0,'Mute Sound');
+        const muteButtonLabel = new TextButton(this,0,0,'Mute Sound',
+            ()=>{
+                console.log("in game menu Button pressed");
+            }
+        );
         
-        muteButtonLabel.textGameObject.setDepth(200);
-        container.add(muteButtonLabel.textGameObject);
-        Display.Align.In.RightCenter(muteButtonLabel.textGameObject,container,0,10);
-        
+        muteButtonLabel.textGameObject
+            .setDepth(200)
+            .setOrigin(0.5,0.5)
+            .setPosition(this.cameras.main.width/2,
+                this.cameras.main.height/2-10)
 
-        const quitGame = new TextLabel(this,0,0,'Quit game');
-        quitGame.textGameObject.setDepth(-200);
+        container.add(muteButtonLabel.textGameObject);        
+
+        const quitGame = new TextButton(this,0,0,'Quit game',()=>{
+            console.log("Quit game in game menu button pressed");
+        });
+
+        quitGame.textGameObject.setDepth(-200).setOrigin(0.5,0.5);
         container.add(quitGame.textGameObject);
         Display.Align.To.BottomCenter(quitGame.textGameObject,muteButtonLabel.textGameObject,0,10);
     }
