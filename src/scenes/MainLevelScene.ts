@@ -1,17 +1,17 @@
 import Phaser from "phaser";
 import ButtonPannel from "../Controls/ButtonPannel";
 import {Atlases,Sounds} from '../Data';
-import {BubbleManager, BUBBLE_EVENTS_CONSTANTS} from "../Prefabs/BubbleManager";
-import { InGameMenuConstant, InGameMenuScene, InGameMenuEvents } from "./InGameMenuScene";
 import { BubbleContainer } from "../Prefabs/BubbleContainer";
+import { LevelMangerEvents, LevelManager, StandardLevelManager } from "../Managers/LevelManager";
+import { InGameMenuManager } from "../Managers/InGameMenuManager";
 
 export const MainLevel_Constants={
   ScenKey:'MainLevel'
 }
 export class MainLevelScene extends Phaser.Scene {
   
-  bubbleManager:BubbleManager;
-  inGameMenuScene:InGameMenuScene;
+  levelManager:LevelManager;
+  inGameMenuManager:InGameMenuManager;
   
   constructor() {
     super({ key: MainLevel_Constants.ScenKey });
@@ -28,10 +28,11 @@ export class MainLevelScene extends Phaser.Scene {
     this.load.setPath('assets/audio');
     this.load.audio('BaloonPop',Sounds.BaloonPop);
     this.load.audio('BackgroundMusic',Sounds.BackgroundMusic);
+    InGameMenuManager.preload(this);
   }
   create(): void {
-    //this.physics.world.setBoundsCollision(false,false,true,false);
-    this.bubbleManager = new BubbleManager(this);
+    this.levelManager = new StandardLevelManager(this);
+    this.inGameMenuManager = new InGameMenuManager(this);
     const clouds = [];
     clouds.push(this.add.sprite(
       this.cameras.main.centerX+100,
@@ -64,18 +65,11 @@ export class MainLevelScene extends Phaser.Scene {
     
     // var music = this.sound.add('BackgroundMusic');
     // music.play();
-    this.scene.launch(InGameMenuConstant.SceneKey);
-    this.inGameMenuScene = this.scene.get(InGameMenuConstant.SceneKey) as InGameMenuScene;
-    this.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,(prefab:BubbleContainer)=>{
-        this.inGameMenuScene.scoreChangedEventHandler(prefab);
+    
+    this.events.on(LevelMangerEvents.BubbleObjectTap,(prefab:BubbleContainer)=>{
+        this.inGameMenuManager.scoreChangedEventHandler(prefab);
     });
-    this.inGameMenuScene.events.on(InGameMenuEvents.TAP_PAUSEMENU,(paused:boolean)=>{
-      this.bubbleManager.spawnManager.timedEvent.paused=paused;  
-      if(paused){ 
-          this.physics.pause();
-        }
-        else this.physics.resume();
-    });
+    
   }
   
 

@@ -16,10 +16,9 @@ export class ScrollContainer extends Phaser.GameObjects.Container{
         const posY:number=0;
         this.setPosition(area.centerX,area.centerY);
 
-        
-        this.on('drag',(event:any)=>{
-            
-        });
+    
+        this.scene.add.existing(this);
+        this.create();
         
     }
      
@@ -31,23 +30,60 @@ export class ScrollContainer extends Phaser.GameObjects.Container{
     }
     public create(){
         this.rectangles = [];
-        var initX = 50;
-        var g2 = this.scene.add.grid(300, 340, 512, 256, 64, 64, 0x00b9f2).setAltFillStyle(0x016fce).setOutlineStyle();
-        this.add(g2);
+        let initX = 50;
+        const g2 = this.scene.add.grid(0, 0, 512, 256, 64, 64, 0x00b9f2).setAltFillStyle(0x016fce).setOutlineStyle();
+        g2.setInteractive();
         this.scene.input.setDraggable(g2);
-
-        const maskGraphics = this.scene.make.graphics({},false);
+        this.add(g2);
+        
+        var image = this.scene.add.sprite(0, 0, 'bubble').setInteractive();
+        this.scene.input.setDraggable(image);
+        this.add(image);
+        image.on('pointerover', function () {
+            image.setTint(0x44ff44);
+        });
+    
+        image.on('pointerout', function () {
+            image.clearTint();
+        });
+    
+        this.scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+    
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+    
+        });
+        
+        const maskGraphics = this.scene.make.graphics({
+            x: 0,
+            y: 0,
+            fillStyle: {
+                color: 0xFDB813,
+                alpha: 1
+            },
+            add: false
+        });
         
         maskGraphics.beginPath();
-        
-        maskGraphics.fillStyle(0xFDB813);
         maskGraphics.fillRect(
             this.area.x, 
             this.area.y, 
             this.area.width, 
             this.area.height);
         maskGraphics.closePath();
-
-        this.mask = new Phaser.Display.Masks.BitmapMask(this.scene, maskGraphics);
+        //this.add(maskGraphics);
+        this.mask = new Phaser.Display.Masks.GeometryMask(this.scene, maskGraphics);
     }
+    
+    createRectangle(x:number, y:number, w:number, h:number){
+        var rectangle = {};
+        rectangle['sprite'] = this.scene.add.graphics({
+            x:x,
+            y:y
+        }); 
+        rectangle['sprite'].beginFill(Phaser.Display.Color.RandomRGB(100, 255), 1);
+        rectangle['sprite'].bounds = new Phaser.Geom.Rectangle(0, 0, w, h);
+        rectangle['sprite'].drawRect(0, 0, w, h);
+        return rectangle;
+      }
 }
