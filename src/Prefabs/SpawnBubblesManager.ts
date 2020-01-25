@@ -1,65 +1,71 @@
 import Phaser, { GameObjects } from "phaser";
-import { BubblePrefab } from "./BubblePrefab";
-import { BUBBLE_EVENTS_CONSTANTS } from "./BubbleManager";
 import { BubbleContainer } from "./BubbleContainer";
+import { LevelMangerEvents } from "../Managers/LevelManager";
+import { LevelDefinition } from "../Managers/LevelDefinitions";
 
-export const EVENTS_CONSTANTS ={
-    UPDATE_EVENT:'WeponPrefabUpdate',
-    FIRE_EVENT:'FireWeponPrefab',
-    DESTROY_EVENT:'WeponPrefab_ProjectileDestroyed'
-}
+
 export class SpawnBubblesManager {
 
-    public fireLimit:number;
-    public fireRate:number;
-    public nexFire:Date;
+    public objectsPerLevel:number;
+    public objectSpawnRate:number;
     public projectiles:Phaser.Physics.Arcade.Group;
     public timedEvent:Phaser.Time.TimerEvent;
     public particles:Phaser.GameObjects.Particles.ParticleEmitterManager;
     
-    constructor(public parentScene:Phaser.Scene){    
-        this.fireLimit=20;
-        this.fireRate=1000;
+    constructor(
+            public parentScene:Phaser.Scene,
+            public definition:LevelDefinition
+        ){    
+        
         this.projectiles = this.parentScene.physics.add.group();
-        
-        this.parentScene.events.on(EVENTS_CONSTANTS.UPDATE_EVENT,this.update,this);
-        this.parentScene.events.on(EVENTS_CONSTANTS.FIRE_EVENT,this.fire,this);
-        this.parentScene.events.on(EVENTS_CONSTANTS.DESTROY_EVENT,this.projectileDestoryed,this);
-        this.timedEvent = this.parentScene.time.addEvent({ delay: this.fireRate, 
-            callback: this.update, 
-            callbackScope: this, 
-            loop: true });
-        
-        this.parentScene.events.on(BUBBLE_EVENTS_CONSTANTS.TAPONBUBBLE_EVENT,this.projectileDestoryed,this);
-        this.particles = this.parentScene.add.particles('bubbleExplosionParticle');
+        this.parentScene.events.on(LevelMangerEvents.LevelObjectDistroyed,this.projectileDestoryed,this);
+        this.parentScene.events.on(LevelMangerEvents.LevelObjectOutofBounds,this.projectileDestoryed,this);
+        this.parentScene.events.on(LevelMangerEvents.MenuButtonPressed,(paused:boolean)=>{
+           this.togglePause(paused);
+        });
+        this.start(this.definition);
     }
 
+    public start(definition:LevelDefinition){
+        this.definition = definition;
+        this.objectsPerLevel=definition.bubbleSpawnMax;
+        if(this.timedEvent === undefined){
+            this.timedEvent = this.parentScene.time.addEvent({ delay: this.definition.bubbleSpawnRateInMillis, 
+                callback: this.update, 
+                callbackScope: this, 
+                loop: true });
+        }
+        this.projectiles.clear(true,true);
+        this.togglePause(false);
+    }
+    
+    public togglePause(paused:boolean){
+        this.timedEvent.paused=paused;
+        this.projectiles.setVisible(!paused);  
+        this.projectiles.active = !paused;
+        if(paused){ 
+            this.parentScene.physics.pause();   
+        }
+        else this.parentScene.physics.resume();
+    }
    
     public update(eventData){
-        this.fire();
-        //TODO: Check if outside of bounds 
-    }
-    public fire(){
-        console.log(this.projectiles);
-        if(this.fireLimit > this.projectiles.countActive()){
-            const prefabInstance = new BubbleContainer(this.parentScene,
-                Phaser.Math.Between(0, this.parentScene.cameras.main.width),
-                this.parentScene.cameras.main.height,null,this.particles);
+        this.objectsPerLevel--;
+        if(this.objectsPerLevel>=0){
+            const prefabInstance = new BubbleContainer(this.parentScene,null,this.definition);
             this.projectiles.add(prefabInstance);
             prefabInstance.afterPhysicsInit();
+            this.parentScene.events.emit(LevelMangerEvents.LevelObjectSpawned,this.objectsPerLevel);
+        }
+        else{
+            this.togglePause(true);
+            this.parentScene.events.emit(LevelMangerEvents.LevelSuccesfullyCompleted);
         }
     }
 
     public projectileDestoryed(prefab:BubbleContainer){
-        console.log('emi particles',prefab.x,prefab.y);
-    
         prefab.destroy();
         this.projectiles.killAndHide(prefab);
-        
-    }
-     
-
-    public killBubble(prefab:BubblePrefab){
         
     }
     

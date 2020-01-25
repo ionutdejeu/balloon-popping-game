@@ -3,7 +3,6 @@ import {InfoScene, Info_Constants } from "./Scenes/InfoScene";
 import {MainMenu, MainMenu_Constants } from "./Scenes/MainMenu";
 import {MainLevelScene, MainLevel_Constants} from "./Scenes/MainLevelScene";
 import { ProgressBarScene,Constants as ProgressParConstants } from "./Scenes/ProgressBarScene";
-import { InGameMenuScene } from "./Scenes/InGameMenuScene";
 
 export function initialize() {
     document.addEventListener('deviceready', onDeviceReady, false);
@@ -24,7 +23,7 @@ function onDeviceReady() {
       height: window.innerHeight,
       render: { pixelArt: true },
       physics: { default: "arcade", arcade: { debug: true, gravity: { y: 0 } } },
-      scene: [MainLevelScene,MainMenu,InGameMenuScene,InfoScene,ProgressBarScene]
+      scene: [MainLevelScene,MainMenu,InfoScene,ProgressBarScene]
     });
     
     setUpHotReload();

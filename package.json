@@ -4,7 +4,7 @@
    "description": "This is the project created from the template: cordova_template",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "webpack --config webpack.config.js",
+      "build": "webpack --config webpack.config.js && cordova serve browser",
       "deviceinstall": "adb install ./platforms/android/app/build/outputs/apk/debug/app-debug.apk"
    },
    "keywords": [

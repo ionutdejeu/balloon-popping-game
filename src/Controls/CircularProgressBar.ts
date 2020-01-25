@@ -10,14 +10,11 @@ export class CircularHealthBar{
     constructor (scene:Phaser.Scene, x:number, y:number)
     {
         this.bar = new Phaser.GameObjects.Graphics(scene);
-  
         this.x = x;
         this.y = y;
         this.value = 100;
         this.p = 360 / 100;
-  
         this.draw();
-  
         scene.add.existing(this.bar);
     }
   

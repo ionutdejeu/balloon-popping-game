@@ -3,7 +3,7 @@ import TextButton from "./TextButton";
 
 
 export default class ButtonPannel{
-    childElements:Array<TextButton>;
+    public childElements:Array<TextButton>;
     buttonHeight:number=100;
     buttonWidht:number=100;
     scene:Phaser.Scene;

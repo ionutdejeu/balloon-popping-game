@@ -19,8 +19,7 @@ export class MainMenuManager{
         //this.scene.events.on(MAIN_MENU_EVENTS.MAIN_MENU_STARTGAME,this.playGameButtonCallback,this);
         this.buttonPannel= new ButtonPannel(this.scene,this.scene.cameras.main.centerX,100);
         this.buttonPannel.addTextButton("Play Game",()=>{this.playGameButtonCallback()});
-        this.buttonPannel.addTextButton("Options",()=>{});
-        this.buttonPannel.addTextButton("Unlocks",()=>{});
+        this.buttonPannel.addTextButton("Sound",()=>{});
         this.buttonPannel.addTextButton("Quit",this.quitButtonCallback);
         this.music = this.scene.sound.add('backgroundMusic');
         this.music.play();
@@ -36,7 +35,7 @@ export class MainMenuManager{
         console.log("optionsButtonCallback  button",this);
     }
     quitButtonCallback(){
-        console.log("quitButtonCallback  button",this);
+        console.log("quitButtonCallback button",this);
         if (window.navigator['app']) {
             window.navigator['app'].exitApp();
         } else if (window.navigator['device']) {

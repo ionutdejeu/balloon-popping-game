@@ -6,7 +6,6 @@ export default class TextLabel{
     scene:Phaser.Scene
     public textGameObject:Phaser.GameObjects.Text;
      
-    
     constructor(scene:Phaser.Scene,posX:number,posY:number,label:string){
         this.scene =scene;
         this.textGameObject = this.scene.make.text({
