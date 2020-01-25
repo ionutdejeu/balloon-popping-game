@@ -4,9 +4,18 @@ import { BubbleContainer } from "../Prefabs/BubbleContainer";
 import TextLabel from "../Controls/TextLabelControl";
 import TextButton from "../Controls/TextButton";
 import { LevelMangerEvents } from "./LevelManager";
+import ButtonPannel from "../Controls/ButtonPannel";
 
 
-
+export function LevelSummaryTimeExpired(points:number){
+    return 'Level completed. Total: '+points;
+}
+export function LevelSummaryGameOver(){
+    return 'Level over.'
+}
+export function LevelSummary(levelNumber:string){
+    return ' Level'+levelNumber+' '; 
+}
  
 export class InGameMenuManager {
     
@@ -17,7 +26,16 @@ export class InGameMenuManager {
     levelTimeLable:TextLabel;
     public gameIsPaused:boolean=false;
     public musicMute:boolean=false;
-    
+    public actionButton:TextButton;
+    public nextLevelButton:TextButton;
+    public textSummary:TextButton;
+
+    public actionButtonLabels = {
+        resume:'Resume game',
+        retry:'Restart level',
+        next:'Next Level'
+    }
+
     inGameMenuContainer:Phaser.GameObjects.Container;
     toggleMenuSpriteBtn:Phaser.GameObjects.Sprite;
     public scaleConfiguration =  {
@@ -81,14 +99,32 @@ export class InGameMenuManager {
             .setInteractive()
             .setScale(this.scaleConfiguration.scale_ratio/10,this.scaleConfiguration.scale_ratio/10)
             .on('pointerdown', (event)=> {
-                console.log(this.inGameMenuContainer); 
-                this.gameIsPaused = !this.gameIsPaused;
-                this.inGameMenuContainer.setVisible(this.gameIsPaused);
-                this.levelTimer.paused=this.gameIsPaused;
-                this.scene.events.emit(LevelMangerEvents.MenuButtonPressed,this.gameIsPaused);
+               this.toggleGamePause();
             });
-        
+        this.scene.events.on(LevelMangerEvents.LevelGameOver,this.handleGameOverEvent,this);
+        this.scene.events.on(LevelMangerEvents.LevelRestart,this.restart,this);
+        this.scene.events.on(LevelMangerEvents.LevelObjectDistroyed,(prefab:BubbleContainer)=>{
+            this.scoreChangedEventHandler(prefab);
+        });
             
+    }
+    public handleGameOverEvent(){
+        this.actionButton.textGameObject.text = this.actionButtonLabels.retry;
+        this.toggleGamePause();
+        // show menu 
+        this.nextLevelButton.textGameObject.setActive(false);
+    }
+    toggleGamePause(){
+         
+        this.gameIsPaused = !this.gameIsPaused;
+        this.inGameMenuContainer.setVisible(this.gameIsPaused);
+        this.levelTimer.paused=this.gameIsPaused;
+        this.scene.events.emit(LevelMangerEvents.MenuButtonPressed,this.gameIsPaused);
+    }
+    public restart(){
+        this.score = 0;
+        this.label.textGameObject.text = "Score: "+this.score;
+        this.levelTimeProgressBar.setValue(100);
     }
     updateTimer(){
         
@@ -99,13 +135,28 @@ export class InGameMenuManager {
         }
         else{
             // stop the game 
+            this.handleTimeExpired();
             this.scene.events.emit(LevelMangerEvents.LevelTimeExpired);
         }
     }
     public handleTimeExpired(){
-        // show menu 
+        
+        this.actionButton.textGameObject.text = this.actionButtonLabels.retry;
         // set specific label with summary of the level 
-        // show next level buttons 
+        this.toggleGamePause();
+    
+        // show menu 
+        this.nextLevelButton.textGameObject.setActive(true);
+        
+    }
+    public actionButtonHandler(){
+        if(this.actionButton.textGameObject.text==this.actionButtonLabels.retry){
+            this.scene.events.emit(LevelMangerEvents.LevelRestart);
+        }
+        else{
+            
+        }
+        this.toggleGamePause();
     }
     public scoreChangedEventHandler(bubblePrefabOrigin:BubbleContainer){
         this.score +=bubblePrefabOrigin.scoreValue;
@@ -117,39 +168,83 @@ export class InGameMenuManager {
         //container.setDepth(100);
         container.setPosition(0,0);
         container.setSize(this.scene.cameras.main.width,this.scene.cameras.main.height);
-        console.log(container);
         const graphics = this.scene.add.graphics();
         
-        graphics.lineStyle(2, 0xffff00, 1);
-        //  32px radius on the corners
-        graphics.strokeRect(0, 0, this.scene.cameras.main.width, this.scene.cameras.main.height);
+        
         //  BG
         graphics.fillStyle(0xFDB813);
-        graphics.fillRect(2, 2, this.scene.cameras.main.width-4, this.scene.cameras.main.height-4);
+        graphics.fillRect(0, 0, this.scene.cameras.main.width, this.scene.cameras.main.height);
         graphics.closePath();
         
-        
         container.add(graphics);
+        
+       
 
-        const muteButtonLabel = new TextButton(this.scene,0,0,'Mute Sound',()=>{
-            console.log("in game menu Button pressed");
+        this.actionButton = new TextButton(this.scene,0,0,this.actionButtonLabels.resume,()=>{
+           this.actionButtonHandler();
         });
         
-        muteButtonLabel.textGameObject
-            .setDepth(200)
-            .setOrigin(0.5,0.5)
-            .setPosition(this.scene.cameras.main.width/2,
-                this.scene.cameras.main.height/2-10)
-
-        container.add(muteButtonLabel.textGameObject);        
-
-        const quitGame = new TextButton(this.scene,0,0,'Quit game',()=>{
-            console.log("Quit game in game menu button pressed");
+        this.actionButton.textGameObject
+        .setDepth(200)
+        .setOrigin(0.5,0.5)
+        .setPosition(this.scene.cameras.main.width/2,
+            this.scene.cameras.main.height/2-10)
+        container.add(this.actionButton.textGameObject);        
+        
+        this.textSummary = new TextButton(this.scene,0,0,LevelSummary('1'),()=>{
+            console.log("Text Summary");
         });
 
-        quitGame.textGameObject.setDepth(-200).setOrigin(0.5,0.5);
-        container.add(quitGame.textGameObject);
-        Display.Align.To.BottomCenter(quitGame.textGameObject,muteButtonLabel.textGameObject,0,10);
+        this.textSummary.textGameObject
+        .setDepth(200)
+        .setOrigin(0.5,0.5);
+        container.add(this.textSummary.textGameObject);
+        Display.Align.To.TopCenter(this.textSummary.textGameObject,this.actionButton.textGameObject,0,20);
+
+        this.nextLevelButton = this.makeAnotherButtonUnderneath('Next Level',
+        ()=>{
+            console.log("TO DO: Implement Next Level");
+        },container,
+        this.actionButton.textGameObject);
+        this.nextLevelButton.textGameObject.setActive(false);
+
+        const muteSoundTxtBtn:TextButton = this.makeAnotherButtonUnderneath('Mute Sound',
+        ()=>{
+            this.musicMute=!this.musicMute;
+            this.scene.events.emit(LevelMangerEvents.MenuOptionsMusicButtonePressed,this.musicMute)
+        },container,
+        this.nextLevelButton.textGameObject);
+        
+        const quitGameTxtBtn:TextButton = this.makeAnotherButtonUnderneath('Quite game',
+        ()=>{
+            console.log("quitButtonCallback button",this);
+            if (window.navigator['app']) {
+                window.navigator['app'].exitApp();
+            } else if (window.navigator['device']) {
+                window.navigator['device'].exitApp();
+            } else {
+                window.close();
+            }
+        },container,
+        muteSoundTxtBtn.textGameObject);
+        
+
+    }
+
+    private makeAnotherButtonUnderneath(
+        label:string,
+        callback:()=>void,
+        container:Phaser.GameObjects.Container,
+        toPositionUnder:Phaser.GameObjects.GameObject):TextButton{
+        const newButton = new TextButton(this.scene,0,0,label,callback);
+        
+        newButton.textGameObject
+            .setDepth(200)
+            .setOrigin(0.5,0.5);
+        
+        Display.Align.To.BottomCenter(newButton.textGameObject,toPositionUnder,0,25);
+        container.add(newButton.textGameObject);        
+        return newButton;
     }
 
 }

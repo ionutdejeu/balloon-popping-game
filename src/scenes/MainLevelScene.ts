@@ -66,9 +66,7 @@ export class MainLevelScene extends Phaser.Scene {
     // var music = this.sound.add('BackgroundMusic');
     // music.play();
     
-    this.events.on(LevelMangerEvents.BubbleObjectTap,(prefab:BubbleContainer)=>{
-        this.inGameMenuManager.scoreChangedEventHandler(prefab);
-    });
+    
     
   }
   

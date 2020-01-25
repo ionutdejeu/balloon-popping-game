@@ -1,12 +1,12 @@
 import Phaser from "phaser";
-import { BubbleContainer } from "../Prefabs/BubbleContainer";
-import { ScoreManager } from "../Prefabs/ScoreManagerPrefab";
+import { BubbleContainer, StandardBubbleTapBehaviour } from "../Prefabs/BubbleContainer";
 import { SpawnBubblesManager } from "../Prefabs/SpawnBubblesManager";
 
 export const LevelMangerEvents = {
     LevelEnded:'Level Manage Level ended event',
     LevelGameOver:'Level Manager - GameOver',
     LevelStared:'Level Manager Level Started event',
+    LevelRestart:'Level Manager Restart event',
     LevelObjectDistroyed:'Level Object Destroyed', 
     LevelObjectOutofBounds:'Level Object has levet the level bounds',
     BubbleObjectTap:'Player tapped on the bubble object',
@@ -17,6 +17,7 @@ export const LevelMangerEvents = {
     MenuOptionsSoundButtonPressed:'In game sound button pressed',
 }
 
+
 export interface LevelManager{
     checkWinCondition()
     checkLooseCondition()
@@ -25,29 +26,26 @@ export interface LevelManager{
     updateLevelState()
 }
 
-
 export class StandardLevelManager implements LevelManager{
     public timeAvailableInSec = 60;
     public lifes:number = 1;
+
+    
     public popSoundEffect:Phaser.Sound.BaseSound;
-    public scoreManager:ScoreManager;
     public spawnManager:SpawnBubblesManager;
     
-
     constructor(public scene:Phaser.Scene){
         this.scene.events.on(LevelMangerEvents.LevelStateUpdate,this.updateLevelState,this);
         this.scene.events.on(LevelMangerEvents.LevelObjectDistroyed,this.ObjectDestroyed,this);
         this.scene.events.on(LevelMangerEvents.LevelObjectOutofBounds,this.ObjectOutOfBounds,this);
         this.scene.events.on(LevelMangerEvents.LevelTimeExpired,this.endHandler,this);
-        
-        this.scoreManager = new ScoreManager(this.scene);
+        this.scene.events.on(LevelMangerEvents.LevelRestart,this.beginHandler,this);
+         
         this.spawnManager = new SpawnBubblesManager(this.scene);
         
         this.popSoundEffect = this.scene.sound.add('BaloonPop');
-        this.scene.events.on(LevelMangerEvents.BubbleObjectTap,(prefab:BubbleContainer)=>{
-            console.log(prefab);
-            this.popSoundEffect.play();  
-        });
+    }
+    public loadData(){
 
     }
     public checkLooseCondition() {
@@ -58,6 +56,7 @@ export class StandardLevelManager implements LevelManager{
     }
     public ObjectDestroyed(bubble:BubbleContainer){
         this.checkWinCondition();
+        this.popSoundEffect.play(); 
     }   
     public ObjectOutOfBounds(bubble:BubbleContainer){
         this.lifes--;
@@ -74,7 +73,8 @@ export class StandardLevelManager implements LevelManager{
         // shwo menu 
     }
     public beginHandler() {
-        
+        //this.scoreManager.restart();
+        this.spawnManager.restart();
     }
 
 

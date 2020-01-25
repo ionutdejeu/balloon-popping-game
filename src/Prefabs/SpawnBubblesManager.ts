@@ -26,19 +26,23 @@ export class SpawnBubblesManager {
         this.parentScene.events.on(LevelMangerEvents.LevelObjectDistroyed,this.projectileDestoryed,this);
         this.parentScene.events.on(LevelMangerEvents.LevelObjectOutofBounds,this.projectileDestoryed,this);
         this.parentScene.events.on(LevelMangerEvents.MenuButtonPressed,(paused:boolean)=>{
-            this.timedEvent.paused=paused;
-            console.log('SpawnManager: '+paused);
-            this.projectiles.setVisible(!paused);  
-            this.projectiles.active = !paused;
-            if(paused){ 
-                this.parentScene.physics.pause();   
-            }
-            else this.parentScene.physics.resume();
-
+           this.togglePause(paused);
         });
-        
     }
-
+    public restart(){
+        this.projectiles.clear(true,true);
+        this.togglePause(false);
+    }
+    
+    public togglePause(paused:boolean){
+        this.timedEvent.paused=paused;
+        this.projectiles.setVisible(!paused);  
+        this.projectiles.active = !paused;
+        if(paused){ 
+            this.parentScene.physics.pause();   
+        }
+        else this.parentScene.physics.resume();
+    }
    
     public update(eventData){
         this.fire();
