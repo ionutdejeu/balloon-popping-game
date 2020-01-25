@@ -32,7 +32,7 @@ export class MainLevelScene extends Phaser.Scene {
   }
   create(): void {
     this.levelManager = new StandardLevelManager(this);
-    this.inGameMenuManager = new InGameMenuManager(this);
+    
     const clouds = [];
     clouds.push(this.add.sprite(
       this.cameras.main.centerX+100,
@@ -63,8 +63,7 @@ export class MainLevelScene extends Phaser.Scene {
       }));
     });
     
-    // var music = this.sound.add('BackgroundMusic');
-    // music.play();
+    
     
     
     

@@ -5,6 +5,7 @@ import TextLabel from "../Controls/TextLabelControl";
 import TextButton from "../Controls/TextButton";
 import { LevelMangerEvents } from "./LevelManager";
 import ButtonPannel from "../Controls/ButtonPannel";
+import { LevelDefinition } from "./LevelDefinitions";
 
 
 export function LevelSummaryTimeExpired(points:number){
@@ -47,7 +48,10 @@ export class InGameMenuManager {
         aspect_ratio : 1							
     };
 
-    constructor(public scene:Phaser.Scene){
+    constructor(
+            public scene:Phaser.Scene,
+            public definition:LevelDefinition
+        ){
         
         this.score=0;
             
@@ -84,6 +88,7 @@ export class InGameMenuManager {
 
         this.label = new TextLabel(this.scene,
                 this.scene.cameras.main.centerX,100,'Score: '+this.score);
+        
         this.levelTimeLable = new TextLabel(this.scene,this.scene.cameras.main.centerX,50,'Remaining time: '+this.levelTimeProgressBar.value);
         this.levelTimer = this.scene.time.addEvent({ delay: 1000, 
             callback: this.updateTimer, 
@@ -108,14 +113,17 @@ export class InGameMenuManager {
         });
             
     }
+    public loadLevel(definition:LevelDefinition){
+        this.definition = definition;
+        this.levelTimeProgressBar.setValue(definition.timeAvailableInSec);
+    }
     public handleGameOverEvent(){
         this.actionButton.textGameObject.text = this.actionButtonLabels.retry;
         this.toggleGamePause();
         // show menu 
         this.nextLevelButton.textGameObject.setActive(false);
     }
-    toggleGamePause(){
-         
+    public toggleGamePause(){
         this.gameIsPaused = !this.gameIsPaused;
         this.inGameMenuContainer.setVisible(this.gameIsPaused);
         this.levelTimer.paused=this.gameIsPaused;
@@ -124,7 +132,7 @@ export class InGameMenuManager {
     public restart(){
         this.score = 0;
         this.label.textGameObject.text = "Score: "+this.score;
-        this.levelTimeProgressBar.setValue(100);
+        this.levelTimeProgressBar.setValue(this.definition.timeAvailableInSec);
     }
     updateTimer(){
         
@@ -211,7 +219,7 @@ export class InGameMenuManager {
         const muteSoundTxtBtn:TextButton = this.makeAnotherButtonUnderneath('Mute Sound',
         ()=>{
             this.musicMute=!this.musicMute;
-            this.scene.events.emit(LevelMangerEvents.MenuOptionsMusicButtonePressed,this.musicMute)
+            this.scene.events.emit(LevelMangerEvents.MenuOptionsMusicButtonePressed,this.musicMute);
         },container,
         this.nextLevelButton.textGameObject);
         

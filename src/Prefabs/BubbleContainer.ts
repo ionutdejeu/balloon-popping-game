@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Atlasses from '../Data/Atlasses';
 import { LevelMangerEvents } from "../Managers/LevelManager";
 import { BubbleGraphics, BubbleStandardGraphics } from "./BubbleContainerUIVariations";
+import { LevelDefinition } from "../Managers/LevelDefinitions";
 
 
 export const bubbleColorsOptions = {
@@ -14,6 +15,7 @@ export interface Behaviour<T>{
     execute(param:T);
 }
 export class StandardSpawnBehaviour implements Behaviour<BubbleContainer>{
+    
     execute(prefab:BubbleContainer){
         prefab.setPosition(
             Phaser.Math.Between(
@@ -61,15 +63,16 @@ export class BubbleContainer extends Phaser.GameObjects.Container{
     public killBehaviour: Behaviour<BubbleContainer>;
     public spawnBehaviour: Behaviour<BubbleContainer>;
     public ui:BubbleStandardGraphics;
-    constructor(public scene:Phaser.Scene,
-        children:Phaser.GameObjects.GameObject[]
+    constructor(
+        public scene:Phaser.Scene,
+        children:Phaser.GameObjects.GameObject[],
+        public definition:LevelDefinition
         ) 
         {
             super(scene, 0, 0,children);
-            this.ui = new BubbleStandardGraphics(this.scene);
+            this.ui = new BubbleStandardGraphics(this.scene,definition);
             this.add(this.ui);
-            //this.scene.add.existing(this.ui);
-
+            
             this.spawnBehaviour = new StandardSpawnBehaviour();
             this.spawnBehaviour.execute(this);
             
@@ -84,7 +87,7 @@ export class BubbleContainer extends Phaser.GameObjects.Container{
             this.scene.physics.world.enable(this);
 
           
-            this.tapBehaviour = new ColoredBubbleTabBehaviour();
+            this.tapBehaviour = new StandardBubbleTapBehaviour();
             this.killBehaviour = new StandardBubbleKillBehavior();
 
             this.on('pointerover',(event)=>{
@@ -101,7 +104,7 @@ export class BubbleContainer extends Phaser.GameObjects.Container{
     public afterPhysicsInit(){
           
          this.arcadePhysicsBody =  <Phaser.Physics.Arcade.Body>this.body;
-         this.arcadePhysicsBody.setVelocity(0,Phaser.Math.Between(-200,-100));
+         this.arcadePhysicsBody.setVelocity(0,Phaser.Math.Between(this.definition.bubbleMinSpeed,this.definition.bubbleMaxSpeed));
          this.interalTimer = this.scene.time.addEvent({ delay: 1000, 
              callback: this.checkSpritesOutOfBoundes, 
              callbackScope: this, 

@@ -1,4 +1,5 @@
 import Phaser, { GameObjects, Scene } from 'phaser'
+import { LevelDefinition } from '../Managers/LevelDefinitions';
 
 export interface BubbleGraphics {
     animateReaction();
@@ -21,14 +22,14 @@ export class BubbleStandardGraphics extends GameObjects.Container implements Bub
     animateDestroy() {
         this.bubbleSprite.setTint(0xff0000);
         console.log("Animate Destroy",this.x,this.y)
-        this.particleEmitter.explode(10,this.x,this.y);
+        this.particleEmitter.explode(10,this.bubbleSprite.x,this.bubbleSprite.y);
     }
     constructor(
             public scene:Scene,
-            
+            public definition:LevelDefinition
         ){
         super(scene,0,0,null);
-        this.sizeXY = Phaser.Math.Between(50,100);
+        this.sizeXY = Phaser.Math.Between(definition.bubbleMinSizeXY,definition.bubbleMaxSizeXY);
 
         //Graphics 
         this.bubbleSprite = scene.physics.add.sprite(0, 0, 'bubble', 0);
@@ -78,9 +79,10 @@ export class MultiColoreBubbleGraphics extends BubbleStandardGraphics{
     ]
     public colorIndex:number=0;
     constructor(
-        public scene:Scene   
+        public scene:Scene,
+        public definition:LevelDefinition  
     ){
-        super(scene)
+        super(scene,definition);
     }
     public animateReaction(){
         this.bubbleSprite.setTint(this.colorSuccessions[this.colorIndex%3]);

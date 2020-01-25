@@ -37,8 +37,10 @@ export class ProgressBar {
     }
     setValue(amount:number){
       this.value = amount;
+      this.p = this.rectangle.width / this.value;
       this.draw();
       return (this.value === 0);
+
     }
   
     draw ()

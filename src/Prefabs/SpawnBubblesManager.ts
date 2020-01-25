@@ -1,6 +1,7 @@
 import Phaser, { GameObjects } from "phaser";
 import { BubbleContainer } from "./BubbleContainer";
 import { LevelMangerEvents } from "../Managers/LevelManager";
+import { LevelDefinition } from "../Managers/LevelDefinitions";
 
 
 export class SpawnBubblesManager {
@@ -12,24 +13,30 @@ export class SpawnBubblesManager {
     public timedEvent:Phaser.Time.TimerEvent;
     public particles:Phaser.GameObjects.Particles.ParticleEmitterManager;
     
-    constructor(public parentScene:Phaser.Scene){    
-        this.fireLimit=20;
-        this.fireRate=1000;
+    constructor(
+            public parentScene:Phaser.Scene,
+            public definition:LevelDefinition
+        ){    
+        
         this.projectiles = this.parentScene.physics.add.group();
-        
-        
-        this.timedEvent = this.parentScene.time.addEvent({ delay: this.fireRate, 
-            callback: this.update, 
-            callbackScope: this, 
-            loop: true });
-        
         this.parentScene.events.on(LevelMangerEvents.LevelObjectDistroyed,this.projectileDestoryed,this);
         this.parentScene.events.on(LevelMangerEvents.LevelObjectOutofBounds,this.projectileDestoryed,this);
         this.parentScene.events.on(LevelMangerEvents.MenuButtonPressed,(paused:boolean)=>{
            this.togglePause(paused);
         });
+        this.start(this.definition);
     }
-    public restart(){
+
+    public start(definition:LevelDefinition){
+        this.definition = definition;
+        this.fireLimit=definition.bubbleSpawnMax;
+        this.fireRate=definition.bubbleSpawnRateInMillis;
+        if(this.timedEvent === undefined){
+            this.timedEvent = this.parentScene.time.addEvent({ delay: this.definition.bubbleSpawnRateInMillis, 
+                callback: this.update, 
+                callbackScope: this, 
+                loop: true });
+        }
         this.projectiles.clear(true,true);
         this.togglePause(false);
     }
@@ -45,13 +52,8 @@ export class SpawnBubblesManager {
     }
    
     public update(eventData){
-        this.fire();
-        //TODO: Check if outside of bounds 
-    }
-    public fire(){
-
         if(this.fireLimit > this.projectiles.countActive()){
-            const prefabInstance = new BubbleContainer(this.parentScene,null);
+            const prefabInstance = new BubbleContainer(this.parentScene,null,this.definition);
             this.projectiles.add(prefabInstance);
             prefabInstance.afterPhysicsInit();
         }

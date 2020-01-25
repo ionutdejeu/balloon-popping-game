@@ -1,6 +1,8 @@
 import Phaser from "phaser";
-import { BubbleContainer, StandardBubbleTapBehaviour } from "../Prefabs/BubbleContainer";
+import { BubbleContainer } from "../Prefabs/BubbleContainer";
 import { SpawnBubblesManager } from "../Prefabs/SpawnBubblesManager";
+import { Level1Definition, LevelDefinition } from "./LevelDefinitions";
+import { InGameMenuManager } from "./InGameMenuManager";
 
 export const LevelMangerEvents = {
     LevelEnded:'Level Manage Level ended event',
@@ -29,10 +31,14 @@ export interface LevelManager{
 export class StandardLevelManager implements LevelManager{
     public timeAvailableInSec = 60;
     public lifes:number = 1;
-
+    public levesArr:LevelDefinition[]
+    public currentLevel:LevelDefinition;
     
     public popSoundEffect:Phaser.Sound.BaseSound;
     public spawnManager:SpawnBubblesManager;
+    inGameMenuManager: InGameMenuManager;
+    public music:Phaser.Sound.BaseSound;
+    
     
     constructor(public scene:Phaser.Scene){
         this.scene.events.on(LevelMangerEvents.LevelStateUpdate,this.updateLevelState,this);
@@ -40,13 +46,30 @@ export class StandardLevelManager implements LevelManager{
         this.scene.events.on(LevelMangerEvents.LevelObjectOutofBounds,this.ObjectOutOfBounds,this);
         this.scene.events.on(LevelMangerEvents.LevelTimeExpired,this.endHandler,this);
         this.scene.events.on(LevelMangerEvents.LevelRestart,this.beginHandler,this);
-         
-        this.spawnManager = new SpawnBubblesManager(this.scene);
+        this.scene.events.on(LevelMangerEvents.MenuOptionsMusicButtonePressed,this.toggleBackgroundMusic,this);
+        
+        this.levesArr = [Level1Definition];
+        this.currentLevel = this.levesArr[0];
+        // to do load data from storrage
+        
+        this.spawnManager = new SpawnBubblesManager(this.scene,this.currentLevel);
+        
         
         this.popSoundEffect = this.scene.sound.add('BaloonPop');
+        this.inGameMenuManager = new InGameMenuManager(this.scene,this.currentLevel);
+        this.music = this.scene.sound.add('BackgroundMusic');
+    
     }
-    public loadData(){
+    public loadStorageData(){
 
+    }
+    public toggleBackgroundMusic(){
+        if(this.music.isPaused){
+            this.music.pause();
+        }
+        else{
+            this.music.play();
+        }
     }
     public checkLooseCondition() {
         if(this.lifes<=0){
@@ -67,14 +90,17 @@ export class StandardLevelManager implements LevelManager{
     }
     
     public checkWinCondition() {
-        
+
+
     }   
     public endHandler() {
         // shwo menu 
+        
     }
     public beginHandler() {
         //this.scoreManager.restart();
-        this.spawnManager.restart();
+        this.spawnManager.start(this.currentLevel);
+        this.toggleBackgroundMusic();
     }
 
 
