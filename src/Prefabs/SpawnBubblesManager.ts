@@ -6,9 +6,8 @@ import { LevelDefinition } from "../Managers/LevelDefinitions";
 
 export class SpawnBubblesManager {
 
-    public fireLimit:number;
-    public fireRate:number;
-    public nexFire:Date;
+    public objectsPerLevel:number;
+    public objectSpawnRate:number;
     public projectiles:Phaser.Physics.Arcade.Group;
     public timedEvent:Phaser.Time.TimerEvent;
     public particles:Phaser.GameObjects.Particles.ParticleEmitterManager;
@@ -29,8 +28,7 @@ export class SpawnBubblesManager {
 
     public start(definition:LevelDefinition){
         this.definition = definition;
-        this.fireLimit=definition.bubbleSpawnMax;
-        this.fireRate=definition.bubbleSpawnRateInMillis;
+        this.objectsPerLevel=definition.bubbleSpawnMax;
         if(this.timedEvent === undefined){
             this.timedEvent = this.parentScene.time.addEvent({ delay: this.definition.bubbleSpawnRateInMillis, 
                 callback: this.update, 
@@ -52,10 +50,16 @@ export class SpawnBubblesManager {
     }
    
     public update(eventData){
-        if(this.fireLimit > this.projectiles.countActive()){
+        this.objectsPerLevel--;
+        if(this.objectsPerLevel>=0){
             const prefabInstance = new BubbleContainer(this.parentScene,null,this.definition);
             this.projectiles.add(prefabInstance);
             prefabInstance.afterPhysicsInit();
+            this.parentScene.events.emit(LevelMangerEvents.LevelObjectSpawned,this.objectsPerLevel);
+        }
+        else{
+            this.togglePause(true);
+            this.parentScene.events.emit(LevelMangerEvents.LevelSuccesfullyCompleted);
         }
     }
 

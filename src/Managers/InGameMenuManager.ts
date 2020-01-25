@@ -8,7 +8,7 @@ import ButtonPannel from "../Controls/ButtonPannel";
 import { LevelDefinition } from "./LevelDefinitions";
 
 
-export function LevelSummaryTimeExpired(points:number){
+export function LevelSummaryCompledeteSuccesfully(points:number){
     return 'Level completed. Total: '+points;
 }
 export function LevelSummaryGameOver(){
@@ -29,7 +29,7 @@ export class InGameMenuManager {
     public musicMute:boolean=false;
     public actionButton:TextButton;
     public nextLevelButton:TextButton;
-    public textSummary:TextButton;
+    public textSummary:TextLabel;
 
     public actionButtonLabels = {
         resume:'Resume game',
@@ -84,6 +84,7 @@ export class InGameMenuManager {
     create(): void {
         this.levelTimeProgressBar = new ProgressBar(this.scene,0,0,
             new Phaser.Geom.Rectangle(0,0,this.scene.cameras.main.width,30));
+        this.levelTimeProgressBar.setValue(this.definition.timeAvailableInSec);
         this.levelTimeProgressBar.bar.setDepth(202);
 
         this.label = new TextLabel(this.scene,
@@ -108,6 +109,7 @@ export class InGameMenuManager {
             });
         this.scene.events.on(LevelMangerEvents.LevelGameOver,this.handleGameOverEvent,this);
         this.scene.events.on(LevelMangerEvents.LevelRestart,this.restart,this);
+        this.scene.events.on(LevelMangerEvents.LevelSuccesfullyCompleted,this.handleLevelCompleted,this)
         this.scene.events.on(LevelMangerEvents.LevelObjectDistroyed,(prefab:BubbleContainer)=>{
             this.scoreChangedEventHandler(prefab);
         });
@@ -115,10 +117,18 @@ export class InGameMenuManager {
     }
     public loadLevel(definition:LevelDefinition){
         this.definition = definition;
-        this.levelTimeProgressBar.setValue(definition.timeAvailableInSec);
+        this.restart();
+    }
+    public handleLevelCompleted(){
+        this.textSummary.textGameObject.setText(LevelSummaryCompledeteSuccesfully(this.score));
+        this.actionButton.textGameObject.setText(this.actionButtonLabels.retry);
+        this.toggleGamePause();
+        // show menu 
+        this.nextLevelButton.textGameObject.setActive(false);
     }
     public handleGameOverEvent(){
-        this.actionButton.textGameObject.text = this.actionButtonLabels.retry;
+        this.textSummary.textGameObject.setText(LevelSummaryGameOver());
+        this.actionButton.textGameObject.setText(this.actionButtonLabels.retry);
         this.toggleGamePause();
         // show menu 
         this.nextLevelButton.textGameObject.setActive(false);
@@ -133,6 +143,8 @@ export class InGameMenuManager {
         this.score = 0;
         this.label.textGameObject.text = "Score: "+this.score;
         this.levelTimeProgressBar.setValue(this.definition.timeAvailableInSec);
+        this.actionButton.textGameObject.text = this.actionButtonLabels.resume;
+        this.textSummary.textGameObject.setText(LevelSummary('1'));
     }
     updateTimer(){
         
@@ -149,7 +161,7 @@ export class InGameMenuManager {
     }
     public handleTimeExpired(){
         
-        this.actionButton.textGameObject.text = this.actionButtonLabels.retry;
+        this.actionButton.textGameObject.setText(this.actionButtonLabels.retry);
         // set specific label with summary of the level 
         this.toggleGamePause();
     
@@ -199,9 +211,7 @@ export class InGameMenuManager {
             this.scene.cameras.main.height/2-10)
         container.add(this.actionButton.textGameObject);        
         
-        this.textSummary = new TextButton(this.scene,0,0,LevelSummary('1'),()=>{
-            console.log("Text Summary");
-        });
+        this.textSummary = new TextLabel(this.scene,0,0,LevelSummary('1'));
 
         this.textSummary.textGameObject
         .setDepth(200)

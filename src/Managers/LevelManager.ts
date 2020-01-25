@@ -5,10 +5,11 @@ import { Level1Definition, LevelDefinition } from "./LevelDefinitions";
 import { InGameMenuManager } from "./InGameMenuManager";
 
 export const LevelMangerEvents = {
-    LevelEnded:'Level Manage Level ended event',
+    LevelSuccesfullyCompleted:'Level Manage Level ended event',
     LevelGameOver:'Level Manager - GameOver',
     LevelStared:'Level Manager Level Started event',
     LevelRestart:'Level Manager Restart event',
+    LevelObjectSpawned:'Level Manager Object spawned',
     LevelObjectDistroyed:'Level Object Destroyed', 
     LevelObjectOutofBounds:'Level Object has levet the level bounds',
     BubbleObjectTap:'Player tapped on the bubble object',
@@ -64,7 +65,7 @@ export class StandardLevelManager implements LevelManager{
 
     }
     public toggleBackgroundMusic(){
-        if(this.music.isPaused){
+        if(!this.music.isPaused){
             this.music.pause();
         }
         else{

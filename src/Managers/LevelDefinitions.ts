@@ -1,6 +1,7 @@
 import { BubbleContainer, StandardBubbleTapBehaviour } from "../Prefabs/BubbleContainer";
 
 export interface LevelDefinition {
+    levelNumber:number,
     bubbleCount:number,
     lifeCount:number,
     timeAvailableInSec:number,
@@ -13,7 +14,8 @@ export interface LevelDefinition {
     bubbleMinSpeed:number,
     bubbleMaxSpeed:number
 }
-export const Level1Definition:LevelDefinition = { 
+export const Level1Definition:LevelDefinition = {
+    levelNumber:1,
     bubbleCount:12,
     lifeCount:1,//instakill,
     timeAvailableInSec:60,
@@ -27,6 +29,7 @@ export const Level1Definition:LevelDefinition = {
     bubbleMaxSpeed:-100
 }
 export const Level2Definition:LevelDefinition = { 
+    levelNumber:2,
     bubbleCount:30,
     lifeCount:1,//instakill,
     timeAvailableInSec:60,
