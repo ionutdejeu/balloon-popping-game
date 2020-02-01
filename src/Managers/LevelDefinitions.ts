@@ -42,4 +42,18 @@ export const Level2Definition:LevelDefinition = {
     bubbleMinSpeed:-200,
     bubbleMaxSpeed:-100
 }
+export const Level3Definition:LevelDefinition = { 
+    levelNumber:3,
+    bubbleCount:50,
+    lifeCount:1,//instakill,
+    timeAvailableInSec:20,
+    bubbleType:typeof(BubbleContainer),
+    bubbleTapBehavior:[typeof(StandardBubbleTapBehaviour)],
+    bubbleSpawnMax:20,
+    bubbleSpawnRateInMillis:500,
+    bubbleMinSizeXY:30,
+    bubbleMaxSizeXY:80,
+    bubbleMinSpeed:-400,
+    bubbleMaxSpeed:-300
+}
  

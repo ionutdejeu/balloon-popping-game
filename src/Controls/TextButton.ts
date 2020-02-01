@@ -35,7 +35,7 @@ export default class TextButton{
             }
         }).setInteractive();
         this.textGameObject.setDepth(100);
-        this.textGameObject.on('pointerover', function (event) {
+        this.textGameObject.on('pointerdown', function (event) {
             this.setTint(0xff0000);
             if(callback!=null)callback();
         });    
