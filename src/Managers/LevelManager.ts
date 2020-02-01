@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { BubbleContainer } from "../Prefabs/BubbleContainer";
 import { SpawnBubblesManager } from "../Prefabs/SpawnBubblesManager";
-import { Level1Definition, LevelDefinition } from "./LevelDefinitions";
+import { Level1Definition, LevelDefinition, Level2Definition, Level3Definition } from "./LevelDefinitions";
 import { InGameMenuManager } from "./InGameMenuManager";
 
 export const LevelMangerEvents = {
@@ -18,6 +18,7 @@ export const LevelMangerEvents = {
     MenuButtonPressed:'IN GAME MENU TAP ON Pause Button',
     MenuOptionsMusicButtonePressed:'IN GAME MENU TAP ON Sound BUTTON',
     MenuOptionsSoundButtonPressed:'In game sound button pressed',
+    MenuNextLevelButtonPressed:'In game sound button pressed',
 }
 
 
@@ -48,8 +49,8 @@ export class StandardLevelManager implements LevelManager{
         this.scene.events.on(LevelMangerEvents.LevelTimeExpired,this.endHandler,this);
         this.scene.events.on(LevelMangerEvents.LevelRestart,this.beginHandler,this);
         this.scene.events.on(LevelMangerEvents.MenuOptionsMusicButtonePressed,this.toggleBackgroundMusic,this);
-        
-        this.levesArr = [Level1Definition];
+        this.scene.events.on(LevelMangerEvents.MenuNextLevelButtonPressed,this.nextLevelHandler,this);
+        this.levesArr = [Level1Definition,Level2Definition,Level3Definition];
         this.currentLevel = this.levesArr[0];
         // to do load data from storrage
         
@@ -59,16 +60,23 @@ export class StandardLevelManager implements LevelManager{
         this.popSoundEffect = this.scene.sound.add('BaloonPop');
         this.inGameMenuManager = new InGameMenuManager(this.scene,this.currentLevel);
         this.music = this.scene.sound.add('BackgroundMusic');
-    
+        this.scene.sound.pauseOnBlur=true;
+        this.toggleBackgroundMusic();
     }
     public loadStorageData(){
 
     }
     public toggleBackgroundMusic(){
-        if(!this.music.isPaused){
+        
+        if((!this.music.isPaused && this.music.isPlaying)){
             this.music.pause();
         }
         else{
+            this.music.play();
+        }
+    }
+    public startMusic(){
+        if((!this.music.isPaused && this.music.isPlaying)){
             this.music.play();
         }
     }
@@ -77,6 +85,15 @@ export class StandardLevelManager implements LevelManager{
             // game lost 
             this.scene.events.emit(LevelMangerEvents.LevelGameOver);
         }
+    }
+    public nextLevelHandler(){
+        let nextLvlIndex = this.levesArr.indexOf(this.currentLevel);
+        console.log('Next level: '+(nextLvlIndex+1));
+        if(nextLvlIndex < this.levesArr.length-1){
+            nextLvlIndex++;
+        }
+        this.currentLevel = this.levesArr[nextLvlIndex];
+        this.beginHandler();
     }
     public ObjectDestroyed(bubble:BubbleContainer){
         this.checkWinCondition();
@@ -102,6 +119,7 @@ export class StandardLevelManager implements LevelManager{
         //this.scoreManager.restart();
         this.spawnManager.start(this.currentLevel);
         this.toggleBackgroundMusic();
+        this.inGameMenuManager.loadLevel(this.currentLevel);
     }
 
 
